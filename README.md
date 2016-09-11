@@ -8,10 +8,10 @@
     newNginx www.example.com ww2.example.com ... -R|-r [option]
 
 ### 必要參數：
--r /path/to/site/root
+    -r /path/to/site/root
 設定網站根目錄，不可與-R共用
 
--R http://127.0.0.1:8080
+    -R http://127.0.0.1:8080
 設定逆向代理不可與-r共用
 
 ### 可選參數：
