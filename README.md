@@ -4,7 +4,6 @@
 因為某天要開nginx site的時候覺得要打好多指令就算了，我竟然還找不到任何新一點的樣本讓我改。
 
 ## 用法
-產生：
     newNginx www.example.com ww2.example.com ... -R|-r [option]
 
 ### 必要參數：
