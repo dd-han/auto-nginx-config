@@ -5,31 +5,31 @@
 
 ## 用法
 產生：
-`newNginx www.example.com ww2.example.com ... -R|-r [option]
+    newNginx www.example.com ww2.example.com ... -R|-r [option]
 
-必要參數：
-    -r /path/to/site/root
-    設定網站根目錄，不可與-R共用
+### 必要參數：
+-r /path/to/site/root
+設定網站根目錄，不可與-R共用
 
-    -R http://127.0.0.1:8080
-    設定逆向代理不可與-r共用
+-R http://127.0.0.1:8080
+設定逆向代理不可與-r共用
 
-Option:
+### 可選參數：
     -f
-    透過301強制將使用者導向https連結
+透過301強制將使用者導向https連結
 
     -F
-    加入HTST的設定
+加入HTST的設定
 
     -n SiteName
-    設定Site的名稱，影響log檔的檔名與設定檔的檔名，不設定預設就是第一個Domain。
+設定Site的名稱，影響log檔的檔名與設定檔的檔名，不設定預設就是第一個Domain。
 
     -php 0|5|7
-    設定php的版本，必須搭配-r使用
+設定php的版本，必須搭配-r使用
 
     -try 0|1
-    設定是否當找不到檔案時，要交給index.php處理（WordPress、MediaWiki可用），僅在php Site有用。
+設定是否當找不到檔案時，要交給index.php處理（WordPress、MediaWiki可用），僅在php Site有用。
 
     -ssl private.key cert.crt
-    指定SSL私鑰與證書，並啟用網站的SSL
+指定SSL私鑰與證書，並啟用網站的SSL
 
