@@ -1,0 +1,1 @@
+fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
