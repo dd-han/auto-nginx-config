@@ -4,7 +4,7 @@
 因為某天要開nginx site的時候覺得要打好多指令就算了，我竟然還找不到任何新一點的樣本讓我改。
 
 ## 安裝
-   sh -c "$(curl -fsSL https://raw.githubusercontent.com/dd-han/auto-nginx-config/master/installer.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/dd-han/auto-nginx-config/master/installer.sh)"
 
 ## 用法
     newNginx www.example.com ww2.example.com ... -R http://target | -r /target [option]
