@@ -1,8 +1,9 @@
 #!/bin/bash
 
 ## Config here
+configNginxDIR='/etc/nginx'
 configPoolDIR='config.pool'
-configDestDIR='/etc/nginx/autoSite'
+configDestDIR=$configNginxDIR'/autoSite'
 configLOGDIR='/var/log/nginx'
 
 loadedDoamins=""
@@ -16,16 +17,58 @@ loadedConfigName=""
 loadedConfigSSLPK=""
 loadedConfigSSLCT=""
 
+OLD_BACKUP=""
+
+function output() {
+	cat - <<< "$@" >> "/tmp/$loadedConfigName"
+}
 
 function genDomains() {
 	for i in $@;do
-		echo "    server_name $i;"
+		output "    server_name $i;"
 	done
 }
 
-function output() {
-	echo "$@"
+
+function outputUsage() {
+	echo '========================================================================'
+    echo 'usage '$0' example.com [exp2.com] -R http://target | -r /target [option]'
+	echo 'option:'
+	echo '    -f           : Always 301 HTTP user to HTTPS'
+	echo '    -F           : Enable HTST'
+	echo '    -n SiteName  : set Site Config Name'
+	echo '    -php 0|5|7   : set php version'
+	echo '    -try 0|1     : set try index.php and index.html while page not found'
+	echo '    -ssl key crt : set ssl key and cert'
+	echo '========================================================================'
 }
+
+## check folder
+if ! test -d "$configNginxDIR"; then
+	echo 'nginx config Dir not exist'
+	exit 1
+fi
+
+if ! test -d "$configNginxDIR/$configPoolDIR"; then
+	echo 'config Pool Dir not exist'
+	exit 2
+fi
+
+if ! test -d "$configDestDIR"; then
+	echo 'config dest Dir not exist'
+	exit 3
+fi
+
+if ! test -d "$configLOGDIR"; then
+	echo 'logging Dir not exist'
+	exit 4
+fi
+
+## check nginx
+if ! nginx -t > /dev/null 2> /dev/null; then
+	echo 'nginx with wrong config before add new site'
+	exit 5
+fi
 
 ## Start loading command args
 loadDomainDone='0'
@@ -102,27 +145,60 @@ if [ "$loadedConfigName" == '' ];then
 	done
 fi
 
-echo =========configs==========
-echo loadedDoamins:
-echo $loadedDoamins
-echo -n loadedType=
-echo $loadedType
-echo -n loadedConfigRoot=
-echo $loadedConfigRoot
-echo -n loadedConfigPHP=
-echo $loadedConfigPHP
-echo -n loadedConfigTRY=
-echo $loadedConfigTRY
-echo loadedConfigSSL:
-echo $loadedConfigSSLPK
-echo $loadedConfigSSLCT
-echo -n loadedConfig301=
-echo $loadedConfig301
-echo -n loadedConfigHTST=
-echo $loadedConfigHTST
-echo -n loadedConfigName=
-echo $loadedConfigName
-echo =========================
+## check params
+if [ "$loadedDoamins" == "" ]; then
+	echo "no domain!!"
+	outputUsage
+	exit 10
+else
+	loadedConfigName=`sed 's/\./-/g' <<< ${loadedConfigName}`
+	loadedConfigName=`cat - <<< ${loadedConfigName}.site`
+fi
+
+if [ "$loadedType" == "" ];then
+	echo "no -R (Reverse Proxy) or -r (root)"
+	outputUsage
+	exit 11
+fi
+
+if [ "$loadedConfigRoot" == "" ];then
+	echo "no target URL or root directory"
+	outputUsage
+	exit 12
+fi
+
+## check config
+nowDate=`date +-%Y%m%d-%H%M%S.backup`
+newName=`sed 's/.site/'$nowDate'/g' <<< $loadedConfigName`
+if test -e "/tmp/$loadedConfigName"; then
+	if test -e "$newName"; then
+		echo "cannot create tmp file"
+		exit 20
+	else
+		mv "/tmp/$loadedConfigName" "/tmp/$newName"
+	fi
+fi
+
+if test -e "$configDestDIR/$loadedConfigName"; then
+	if test -e "$newName"; then
+		echo "config already exist and cannot rename"
+		exit 21
+	else
+		if mv "$configDestDIR/$loadedConfigName" "$configDestDIR/$newName"; then
+			if nginx -t > /dev/null 2> /dev/null; then
+				echo "old config $loadedConfigName has rename to $newName"
+				OLD_BACKUP="$newName"
+			else
+				mv "$configDestDIR/$newName" "$configDestDIR/$loadedConfigName"
+				echo "trying to renmae config, but nginx failed"
+				exit 22
+			fi
+		else
+			echo "config already exist and cannot rename"
+			exit 21
+		fi
+	fi
+fi
 
 ## process 301 red server
 if [ "$loadedConfig301" == '1' ];then
@@ -179,9 +255,9 @@ if [ "$loadedType" == "ROOT" ];then
 
 	if [ "$loadedConfigTRY" != '0' ]; then
 		if [ "loadedConfigPHP" != '0' ]; then
-			output '        try $uri $uri/ index.html index.html index.php?$args;'
+			output '        try_files $uri $uri/ index.html index.html index.php?$args;'
 		else
-			output '        try $uri $uri/ index.html index.html;'
+			output '        try_files $uri $uri/ index.html index.html;'
 		fi
 	else
 		output '        index index.html index.html'$extFile';'
@@ -202,3 +278,19 @@ if [ "$loadedConfigPHP" != '0' ];then
 fi
 
 output '}'
+
+cp "/tmp/$loadedConfigName" "$configDestDIR"
+if nginx -t > /dev/null; then
+	echo "new site ready"
+else
+	rm "$configDestDIR/$loadedConfigName"
+	echo "new site cause nginx failed"
+	echo "config create at /tmp/$loadedConfigName"
+	if [ "$OLD_BACKUP" != "" ]; then
+		mv "$configDestDIR/$OLD_BACKUP" "$configDestDIR/$loadedConfigName"
+		echo "old config restored"
+	fi
+	exit 30
+fi
+
+exit 0
