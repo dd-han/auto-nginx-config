@@ -233,8 +233,8 @@ fi
 output '    include '$configPoolDIR'/baseSecure.conf;'
 
 ## gen log config
-output '    access_log access_'$loadedConfigName'.log;'
-output '    error_log error_'$loadedConfigName'.log;'
+output '    access_log '$configLOGDIR'/access_'$loadedConfigName'.log;'
+output '    error_log '$configLOGDIR'/error_'$loadedConfigName'.log;'
 
 ## gen SSL config
 output ''
