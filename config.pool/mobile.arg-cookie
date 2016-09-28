@@ -1,0 +1,25 @@
+
+
+#check if query arg = yes (example.com?mobile=yes), set variable
+if ($arg_mobile = 'yes') { 
+    add_header Set-Cookie mobile=yes;
+    set $mobile_rewrite perform;
+}
+
+#check if cookie mobile=yes, set variable
+if ($cookie_mobile = 'yes') { 
+    set $mobile_rewrite perform;
+}
+
+#check if query arg = no (example.com?mobile=no), break
+if ($arg_mobile = 'no') { 
+	#echo "test";
+	add_header Set-Cookie mobile=no;
+    	set $mobile_rewrite do_not_perform;
+}
+
+#check if cookie mobile=no, break
+if ($cookie_mobile = 'no') { 
+    set $mobile_rewrite do_not_perform;
+}
+
