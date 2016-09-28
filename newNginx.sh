@@ -216,7 +216,7 @@ if [ "$loadedConfig301" == '1' ];then
 else
 	prefix=''
 fi
-output '    '$prefix'listen 80;' 
+output '    '$prefix'include config.pool/listen.conf;' 
 
 ## gen domain settings
 genDomains $loadedDoamins
