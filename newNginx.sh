@@ -216,7 +216,7 @@ if [ "$loadedConfig301" == '1' ];then
 else
 	prefix=''
 fi
-output '    '$prefix'listen 80;' 
+output '    '$prefix'include config.pool/listen.conf;' 
 
 ## gen domain settings
 genDomains $loadedDoamins
@@ -247,6 +247,12 @@ fi
 output '    '$prefix'ssl_certificate_key '$loadedConfigSSLPK';'
 output '    '$prefix'ssl_certificate     '$loadedConfigSSLCT';'
 output '    '$prefix'include '$configPoolDIR'/ssl.conf;'
+if [ "$loadedConfigHTST" == '1' ] && [ "$loadedConfigSSLPK" == '' ];then
+	prefix=''
+else
+	prefix='#'
+fi
+output '    '$prefix'unclude '$configPoolDIR'ssl_HTST.conf;'
 
 ## gen location root
 output ''

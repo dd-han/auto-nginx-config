@@ -1,0 +1,2 @@
+auth_basic "Privating Area.";
+auth_basic_user_file /home/dd-han/services/websites/private/.htpasswd;
