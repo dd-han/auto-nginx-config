@@ -7,31 +7,35 @@
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/dd-han/auto-nginx-config/master/installer.sh)"
 
 ## 用法
-    newNginx www.example.com ww2.example.com ... -R http://target | -r /target [option]
+    newNginx.sh www.example.com ww2.example.com ... -R http://target | -r /target/webroot [option]
 
 ### 必要參數：
     -r /path/to/site/root
-設定網站根目錄，不可與-R共用
+ `-r` 參數設定網站根目錄，裡面要有`index.html`之類的東西，不可與`-R`共用。
 
     -R http://127.0.0.1:8080
-設定逆向代理不可與-r共用
+ `-R` 參數設定逆向代理，後面是真正的伺服器連線位置，不可與`-r`共用。
+
+
 
 ### 可選參數：
     -f
-透過301強制將使用者導向https連結
+ `-f` 會啟用透過301強制將使用者導向https連結
+
 
     -F
-加入HTST的設定
+ `-F` 會加入HTST的設定
+
 
     -n SiteName
-設定Site的名稱，影響log檔的檔名與設定檔的檔名，不設定預設就是第一個Domain。
+ `-n` 設定Site的名稱，影響log檔名與設定檔檔名，不設定預設就是第一個Domain。
 
     -php 0|5|7
-設定php的版本，必須搭配-r使用
+ `-php` 設定php的版本，必須搭配-r使用
 
     -try 0|1
-設定是否當找不到檔案時，要交給index.php處理（WordPress、MediaWiki可用），僅在php Site有用。
+ `-try` 設定是否當找不到檔案時，要交給index.php處理（WordPress、MediaWiki可用），搭配 `-r` 使用。
 
     -ssl private.key cert.crt
-指定SSL私鑰與證書，並啟用網站的SSL
+ `-ssl` 指定SSL私鑰與證書，並啟用網站的SSL
 

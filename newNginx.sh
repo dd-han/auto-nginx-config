@@ -8,8 +8,8 @@ configLOGDIR='/var/log/nginx'
 
 loadedDoamins=""
 loadedType=""
-loadedConfigPHP=""
-loadedConfigTRY=""
+loadedConfigPHP="0"
+loadedConfigTRY="0"
 loadedConfig301="0"
 loadedConfigRoot=""
 loadedConfigHTST="0"
@@ -261,7 +261,7 @@ output '    location / {'
 if [ "$loadedType" == "ROOT" ];then
 
 	if [ "$loadedConfigTRY" != '0' ]; then
-		if [ "loadedConfigPHP" != '0' ]; then
+		if [ "$loadedConfigPHP" != '0' ]; then
 			output '        try_files $uri $uri/ index.html index.html index.php?$args;'
 		else
 			output '        try_files $uri $uri/ index.html index.html;'
@@ -271,7 +271,7 @@ if [ "$loadedType" == "ROOT" ];then
 	fi
 else
 	output '        proxy_pass '$loadedConfigRoot';'
-	output '        include include proxy_params;'
+	output '        include proxy_params;'
 fi
 output '    }'
 
