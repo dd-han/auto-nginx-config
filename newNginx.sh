@@ -247,6 +247,7 @@ fi
 output '    '$prefix'ssl_certificate_key '$loadedConfigSSLPK';'
 output '    '$prefix'ssl_certificate     '$loadedConfigSSLCT';'
 output '    '$prefix'include '$configPoolDIR'/ssl.conf;'
+output '    include '$configPoolDIR'/let-enc-Auth.conf;'
 if [ "$loadedConfigHTST" == '1' ] && [ "$loadedConfigSSLPK" == '' ];then
 	prefix=''
 else
