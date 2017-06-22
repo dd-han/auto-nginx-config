@@ -253,7 +253,7 @@ if [ "$loadedConfigHTST" == '1' ] && [ "$loadedConfigSSLPK" == '' ];then
 else
 	prefix='#'
 fi
-output '    '$prefix'unclude '$configPoolDIR'ssl_HTST.conf;'
+output '    '$prefix'include '$configPoolDIR/'ssl_HTST.conf;'
 
 ## gen location root
 output ''
